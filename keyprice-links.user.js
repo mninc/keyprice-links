@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         marketplace.tf keyprice links
 // @namespace    http://manic.tf
-// @version      1.0
+// @version      2.0
 // @description  add http://manic.tf/keyprice links to marketplace.tf detailed stats popups
 // @author       manic
 // @grant        none
@@ -18,58 +18,77 @@
 (function() {
     'use strict';
 
-    function run() {
-        let time, price;
+    function addLink() {
+        let tables = document.getElementsByTagName("table");
+        for (let i = 0; i < tables.length; i++) {
+            let table = tables[i];
+            if (table.id.startsWith("salesTable")) {
+                console.log("yep");
+                let body = table.getElementsByTagName("tbody")[0];
+                let total = 0;
+                for (let i = 0; i < body.children.length; i++) {
+                    total += parseInt(body.children[i].children[1].innerText.replace(",", ""));
+                }
+                let median = Math.floor(total / 2);
+                let index = 0;
+                let price;
+                for (let i = 0; i < body.children.length; i++) {
+                    index += parseInt(body.children[i].children[1].innerText.replace(",", ""));
+                    if (index > median) {
+                        price = body.children[i].children[0].innerText.substr(1);
+                        break;
+                    }
+                    if (i === body.children.length - 1) {
+                        price = body.children[i].children[0].innerText.substr(1);
+                    }
+                }
 
-        myLineChart.options.tooltips.custom = function(tooltip){
-            console.log(tooltip);
-            let date = tooltip.title[0];
-            console.log(time);
-            console.log(price);
+                open = true;
+                if (document.getElementById("keyprice-link")) {
+                    document.getElementById("keyprice-link").href = "http://manic.tf/keyprice?price=" + price;
+                } else {
+                    let a = document.createElement("a");
+                    a.href = "http://manic.tf/keyprice?price=" + price;
+                    a.innerText = "Convert to keys";
+                    a.id = "keyprice-link";
+                    a.target = "_blank";
 
-            time = new Date(date);
-
-            let year = time.getFullYear().toString();
-            let month = time.getMonth() + 1;
-            month = (month>9 ? '' : '0') + month;
-            month = month.toString();
-            let day = time.getDate();
-            day = (day>9 ? '' : '0') + day;
-            day = day.toString();
-
-            time = year + "-" + month + "-" + day;
-            price = tooltip.body[0].lines[0].substring(14);
-        };
-
-        let old_function = myLineChart.options.onClick;
-        myLineChart.options.onClick = function(data, elements) {
-            old_function(data, elements);
-
-            if (document.getElementById("keyprice-link")) {
-                document.getElementById("keyprice-link").href = "http://manic.tf/keyprice?at=" + time + "&price=" + price;
-            } else {
-                let a = document.createElement("a");
-                a.href = "http://manic.tf/keyprice?at=" + time + "&price=" + price;
-                a.innerText = "Convert to keys";
-                a.id = "keyprice-link";
-                a.target = "_blank";
-
-                let titles = document.getElementsByClassName("modal-title");
-                for (let i = 0; i < titles.length; i++) {
-                    let title = titles[i];
-                    if (title.innerText === "Detailed Stats") {
-                        title.innerText += "  -  ";
-                        title.appendChild(a);
+                    let titles = document.getElementsByClassName("modal-title");
+                    for (let i = 0; i < titles.length; i++) {
+                        let title = titles[i];
+                        if (title.innerText === "Detailed Stats") {
+                            title.innerText += "  -  ";
+                            title.appendChild(a);
+                        }
                     }
                 }
             }
-        };
-        myLineChart.update();
+        }
+
     }
 
-    function delayRun() {
-        setTimeout(run, 500);
+    let modal;
+    function getModal() {
+        let elements = document.querySelectorAll('*[id]');
+        for (let i = 0; i < elements.length; i++) {
+            let elem = elements[i];
+            if (elem.id.startsWith("salesTableModal")) {
+                modal = elem;
+                clearInterval(interval);
+                setInterval(check, 200);
+                break;
+            }
+        }
     }
-    window.onload = delayRun;
+    let interval = setInterval(getModal, 1000);
+    let open = false;
+
+    function check() {
+        if (!open && modal.style.display === "block") {
+            addLink();
+        } else if (modal.style.display !== "block") {
+            open = false;
+        }
+    }
 
 })();
