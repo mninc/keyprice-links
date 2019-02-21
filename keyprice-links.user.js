@@ -23,7 +23,6 @@
         for (let i = 0; i < tables.length; i++) {
             let table = tables[i];
             if (table.id.startsWith("salesTable")) {
-                console.log("yep");
                 let body = table.getElementsByTagName("tbody")[0];
                 let total = 0;
                 for (let i = 0; i < body.children.length; i++) {
