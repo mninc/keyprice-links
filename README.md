@@ -10,6 +10,6 @@ Add https://manic.tf/keyprice links to marketplace.tf detailed stats popups
 Want to verify the accuracy and authenticity of this script and https://manic.tf/keyprice? Go to the [marketplace.tf key page](https://marketplace.tf/items/tf2/5021;6) and click on any point in the graph. When you click "Convert to keys" the displayed value should always be 1.00 keys.
 
 ## In use
-![Example](https://media.discordapp.net/attachments/337943916613599234/487732320468467712/unknown.png)
+![Example](https://cdn.discordapp.com/attachments/445162468541464576/610949876502757376/unknown.png)
 
-![Example 2](https://media.discordapp.net/attachments/337943916613599234/487732495912140808/unknown.png)
+![Example 2](https://cdn.discordapp.com/attachments/445162468541464576/610950045969416203/unknown.png)
