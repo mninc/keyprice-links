@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         marketplace.tf keyprice links
 // @namespace    http://manic.tf
-// @version      3.0
+// @version      3.1
 // @description  add http://manic.tf/keyprice links to marketplace.tf detailed stats popups
 // @author       manic
 // @grant        none
@@ -20,7 +20,17 @@
 
     function run() {
         let elements = document.getElementsByClassName('panel-body');
-        let panel = elements[1];
+        let panel;
+        for (let i = 0; i < elements.length; i++) {
+            let elem = elements[i];
+            let scriptFound = elem.getElementsByTagName("script").length;
+            let canvasFound = elem.getElementsByTagName("canvas").length;
+            if (canvasFound && scriptFound) {
+                panel = elem;
+                break;
+            }
+        }
+        if (!panel) return;
         let script = panel.getElementsByTagName("script")[0];
         let canvas = panel.getElementsByTagName('canvas')[0];
         let canvasID = canvas.id;
