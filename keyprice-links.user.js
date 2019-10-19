@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         marketplace.tf keyprice links
 // @namespace    http://manic.tf
-// @version      3.2
+// @version      3.3
 // @description  add http://manic.tf/keyprice links to marketplace.tf detailed stats popups
 // @author       manic
 // @grant        none
@@ -11,7 +11,7 @@
 // @supportURL      https://github.com/mninc/keyprice-links/issues
 // @downloadURL     https://github.com/mninc/keyprice-links/raw/master/keyprice-links.user.js
 
-// @run-at       document-start
+// @run-at       document-end
 // @match        https://marketplace.tf/items/*
 // ==/UserScript==
 
@@ -33,11 +33,13 @@
     let script = panel.getElementsByTagName("script")[0];
     let canvas = panel.getElementsByTagName('canvas')[0];
     let canvasID = canvas.id;
+    let newCanvasID = canvasID + "-manic";
     let canvasSku = canvas.dataset.sku;
     let iframe = panel.getElementsByTagName("iframe")[0];
 
     let scriptText = script.innerText;
     scriptText = scriptText.substring(0, scriptText.indexOf('});'));
+    scriptText = scriptText.replace(new RegExp(canvasID, "g"), newCanvasID);
     scriptText += `
         let time, price;
 
@@ -86,7 +88,7 @@
     scriptText += '});';
 
     let newCanvas = document.createElement('canvas');
-    newCanvas.id = canvasID;
+    newCanvas.id = newCanvasID;
     newCanvas.dataset.sku = canvasSku;
     newCanvas.width = canvas.width;
     newCanvas.height = canvas.height;
